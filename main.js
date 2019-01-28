@@ -2,40 +2,44 @@ let canvas = document.getElementById('canvas')
 canvas.width = 400
 canvas.height = 400
 let ctx = canvas.getContext('2d')
+let fps = 30
 
-let image = new Image()
-image.src = "http://www.seventhundersoftware.com/articles/web-app/basics/assets/sprite-horse.gif"
+class Horse {
+    constructor(){
+        this.x = 0
+        this.y = 0
+        this.w = 100
+        this.h = 100
+        this.image = new Image()
+        this.image.src = "http://www.williammalone.com/articles/create-html5-canvas-javascript-sprite-animation/downloads/sprite-animation-demo/images/coin-sprite-animation.png"
+        this.sx = 0
+        this.sy = 0
+        this.sc = 10
+        this.sr = 1 
+    }
+    animate(){
+        console.log(
+            `${this.image}, sx ${this.sx}, sx ${this.sy}, w ${this.w}, h ${this.h}, x ${this.x}, y ${this.y}, c ${this.c}, r ${this.r}}`
+          );
+        ctx.clearRect(0,0,canvas.width, canvas.height);
+        ctx.drawImage(this.image,this.w*this.sx,this.h*this.sy,this.w,this.h,this.x,this.y,this.w,this.h)
 
+        this.sx++;
+        if(this.sx>(this.sc-1)){
+            this.sx=0;
+            this.sy++;
+        }
+        if(this.sy>(this.sr-1)){
+            this.sy=0;
+        }
 
-
-let x = 0 //position in canvas
-let y = 0 //position in canvas
-let w = 186
-let h = 135
-let c = 4
-let r = 4
-
-function animate(image,x,y,w,h,c,r) {
-    context.drawImage(image,w*x,h*y,w,h,0,0,w,h)
+    }
 }
 
+let horse = new Horse()
 
+function update(){
+    horse.animate()
+}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-setInterval(animate, 1000/15);
+setInterval(update, 1000/fps)
