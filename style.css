@@ -1,6 +1,15 @@
 html, body {
-    border:opx
+    border:0px;
+    margin:0px;
 }
 canvas {
-    border: 1px solid
+    border: 1px solid;  
+    margin:4px;
+    background-image: url("./images/backgroundHD.png");
+    background-size: 100% 100%;
+}
+body {
+    display:flex;
+    justify-content: center;
+    align-content: center;
 }
