@@ -1,15 +1,56 @@
-html, body {
-    border:0px;
-    margin:0px;
+@font-face {
+  font-family: "Duck Hunt";
+  src: url("./fonts/duckhunt.eot?") format("eot"),
+    url("./fonts/duckhunt.woff") format("woff"),
+    url("./fonts/duckhunt.ttf") format("truetype"),
+    url("./fonts/duckhunt.svg#DuckHunt") format("svg");
+  font-weight: normal;
+  font-style: normal;
+}
+
+html,
+body {
+  border: 0px;
+  margin: 0px;
 }
 canvas {
-    border: 1px solid;  
-    margin:4px;
-    background-image: url("./images/backgroundHD.png");
-    background-size: 100% 100%;
+  border-radius: 20px;
+  border: 1px solid;
+  background-image: url("./images/backgroundHD.png");
+  background-size: 100% 100%;
 }
 body {
-    display:flex;
-    justify-content: center;
-    align-content: center;
+  display: flex;
+  flex-flow: column;
+  justify-content: center;
+  align-content: center;
+  height: 100%;
+  width: 100%;
+  background-color: black;
+}
+h1 {
+  text-align: center;
+  font-family: "Duck Hunt";
+  margin:0px;
+  color: #48CDDE;
+  padding-top:10px;
+  font-size: 54px;
+}
+#canvassection {
+  margin: 4px auto;
+}
+#buttonsection {
+  display: flex;
+  justify-content: space-evenly;
+  align-content: center;
+}
+button{
+  font-family: 'Duck Hunt';
+  font-size: 24px;
+  background-color: #48CDDE;
+  color:black;
+  padding: 10px 20px 5px 20px;
+  border: 0;
+  box-shadow: 0;
+  border-radius: 5px;
 }
