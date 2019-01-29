@@ -8,37 +8,76 @@ let images = {
   env: "./images/environmentHD.png"
 };
 
-function Environment() {
-  this.x = 0;
-  this.y = 0;
-  this.w = canvas.width;
-  this.h = canvas.height;
-  this.image = new Image();
-  this.image.src = images.env;
-  this.draw = function() {
-    ctx.drawImage(this.image, this.x, this.y, canvas.width, canvas.height);
-  };
+class Environment {
+  constructor() {
+    this.image = new Image();
+    this.image.src = images.env;
+    this.draw = () => {
+      ctx.drawImage(this.image, 0, 0, canvas.width, canvas.height);
+    };
+  }
 }
 
 function KeyLayout() {
-  this.color = "white"
-  this.keywidth = 140
-  this.keyheight = 145
+  this.color = "white";
+  this.keywidth = 140;
+  this.keyheight = 145;
+  this.font = '35px "Duck Hunt"'
+  this.fontcolor = '#ffffff'
+  this.keys = [
+    ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "?", "¿"],
+    ["Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P", "´", "+"],
+    ["A", "S", "D", "F", "G", "H", "J", "K", "L", "Ñ", "{"],
+    ["Z", "X", "C", "V", "B", "N", "M", ",", ".", "-"]
+  ];
   this.draw = function() {
     ctx.strokeStyle = this.color;
     for (i = 0; i < 12; i++) {
       ctx.strokeRect(0 + i * this.keywidth, 0, this.keywidth, this.keyheight);
     }
     for (i = 0; i < 12; i++) {
-      ctx.strokeRect(this.keywidth*.5 + i * this.keywidth, this.keyheight, this.keywidth, this.keyheight);
+      ctx.strokeRect(
+        this.keywidth * 0.5 + i * this.keywidth,
+        this.keyheight,
+        this.keywidth,
+        this.keyheight
+      );
     }
     for (i = 0; i < 11; i++) {
-      ctx.strokeRect(this.keywidth + i * this.keywidth, this.keyheight*2, this.keywidth, this.keyheight);
+      ctx.strokeRect(
+        this.keywidth + i * this.keywidth,
+        this.keyheight * 2,
+        this.keywidth,
+        this.keyheight
+      );
     }
     for (i = 0; i < 10; i++) {
-      ctx.strokeRect(this.keywidth*1.5 + i * this.keywidth, this.keyheight*3, this.keywidth, this.keyheight);
+      ctx.strokeRect(
+        this.keywidth * 1.5 + i * this.keywidth,
+        this.keyheight * 3,
+        this.keywidth,
+        this.keyheight
+      );
     }
-    ctx.strokeRect(this.keywidth*2.5, this.keyheight*4, this.keywidth*8, this.keyheight);
+
+    ctx.textAlign = "center"
+    ctx.fillStyle = this.fontcolor
+    ctx.font = this.font
+    ctx.textBaseline = "middle"
+    for (l in this.keys[0]) {
+      ctx.fillText(this.keys[0][l],this.keywidth*0.5+l*this.keywidth,this.keyheight*0.5)
+    }
+    for (l in this.keys[1]) {
+      ctx.fillText(this.keys[1][l],this.keywidth*1+l*this.keywidth,this.keyheight*1.5)
+    }
+    for (l in this.keys[2]) {
+      ctx.fillText(this.keys[2][l],this.keywidth*1.5+l*this.keywidth,this.keyheight*2.5)
+    }
+    for (l in this.keys[3]) { 
+      ctx.fillText(this.keys[3][l],this.keywidth*2+l*this.keywidth,this.keyheight*3.5)
+    }
+
+
   };
 }
 
@@ -105,16 +144,9 @@ function start() {
 
 function update() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-  environment.draw();
   keylayout.draw();
-  dog.animate(dog.sprite);
+  environment.draw();
+  // dog.animate(dog.sprite);
 }
 
-keylayout.draw()
-// ctx.clearRect(0, 0, canvas.width, canvas.height);
-let image = new Image()
-image.src = images.env
-ctx.drawImage(image, 0, 0)
-// environment.draw();
-
-//start()
+start();

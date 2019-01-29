@@ -1,12 +1,3 @@
-// let canvas = document.getElementById("canvas");
-// canvas.width = 1700;
-// canvas.height = 900;
-// let ctx = canvas.getContext("2d");
-// let fps = 30;
-// let images = {
-//   bg1: './images/backgroundHD.png',
-// }
-
 // function Background (){
 //   this.x = 0
 //   this.y = 0
