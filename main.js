@@ -8,7 +8,9 @@ let ctx = canvas.getContext("2d");
 let interval;
 let score = 0;
 let bullets = 3;
+let isFreezeActive = false;
 let isPaused = false;
+let coopEnabled = false;
 let hidekeyboard = false;
 let frames = 0;
 let fps = 20;
@@ -155,6 +157,7 @@ function Duck() {
   this.iframe = frames;
   this.isFlying = true;
   this.isFalling = false;
+  this.isSlowed = false;
   this.an = Math.random() * 45;
   this.vx = this.v * Math.cos(this.an);
   this.vy = -this.v * Math.sin(this.an);
@@ -165,8 +168,13 @@ function Duck() {
     ctx.fillRect(this.x, this.y, this.w, this.h);
   };
   this.move = () => {
-    this.x += this.vx;
-    this.y += this.vy;
+    if (this.isSlowed) {
+      this.x += this.vx / 4;
+      this.y += this.vy / 4;
+    } else {
+      this.x += this.vx;
+      this.y += this.vy;
+    }
   };
   this.gotShot = () => {
     this.vx = 0;
@@ -186,10 +194,48 @@ function Duck() {
   };
 }
 
+function FreezeBeam(x, y) {
+  this.x = x;
+  this.y = y;
+  this.stage = 0;
+  this.r = 0;
+  this.draw = () => {
+    if (isFreezeActive) {
+      if (this.stage < 30) {
+        this.r = 0 + this.stage * 5;
+        this.stage++;
+      } else if (this.stage < 50) {
+        this.r = 150;
+        this.stage++;
+      } else if (this.stage >= 50) {
+        this.stage = 0;
+        isFreezeActive = false;
+      }
+      ctx.beginPath();
+      ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2, true);
+      ctx.closePath();
+      ctx.fillStyle = "rgb(192,250,242,0.5)";
+      ctx.fill();
+    }
+  };
+  this.freeze = () => {
+    for (d in ducks) {
+      let nr = this.r + ducks[d].w / 2;
+      let dist = Math.sqrt(Math.pow(this.x-ducks[d].x, 2) + Math.pow(this.y-ducks[d].y, 2));
+      if(dist <= nr && isFreezeActive) {
+        ducks[d].isSlowed = true
+      } else {
+        ducks[d].isSlowed = false
+      }
+    }
+  };
+}
+
 let environment = new Environment();
 let keylayout = new KeyLayout();
 let obstacles = [];
 let ducks = [];
+let freeze = new FreezeBeam();
 ducks.push(new Duck());
 
 function start() {
@@ -221,11 +267,14 @@ function update() {
   if (frames === 60) {
     ducks.push(new Duck());
   }
+  
   for (d in ducks) {
     ducks[d].move();
     ducks[d].drawSquare();
     ducks[d].randomFly();
   }
+  freeze.draw();
+  freeze.freeze()
   environment.draw();
   frames++;
 }
@@ -408,12 +457,29 @@ addEventListener("keypress", e => {
     registerShot(e.code);
   }
 });
+
 button1.addEventListener("click", function() {
   hidekeyboard = !hidekeyboard;
   if (button1.innerText === "Normal Mode") {
     button1.innerText = "Expert Mode";
   } else {
     button1.innerText = "Normal Mode";
+  }
+});
+
+button2.addEventListener("click", function() {
+  coopEnabled = !coopEnabled;
+  if (button2.innerText === "Co-Op Disabled") {
+    button2.innerText = "Co-Op Enabled";
+  } else {
+    button2.innerText = "Co-Op Disabled";
+  }
+});
+
+canvas.addEventListener("mousedown", function(e) {
+  if (coopEnabled && !isFreezeActive) {
+    isFreezeActive = true;
+    freeze = new FreezeBeam(e.layerX, e.layerY);
   }
 });
 
