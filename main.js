@@ -1,11 +1,15 @@
 let canvas = document.getElementById("canvas");
+let button1 = document.getElementById("button1");
+let button2 = document.getElementById("button2");
+let button3 = document.getElementById("button3");
 canvas.width = 1750;
 canvas.height = 840;
 let ctx = canvas.getContext("2d");
 let interval;
-let score = 0
-let bullets = 3
+let score = 0;
+let bullets = 3;
 let isPaused = false;
+let hidekeyboard = false;
 let frames = 0;
 let fps = 20;
 let vMult = 30 / fps;
@@ -117,6 +121,9 @@ function Obstacle(x, y, w, h, color = "white") {
   this.bounce = function(squares) {
     for (s in squares) {
       let square = squares[s];
+      if (!squares[s].isFlying) {
+        continue;
+      }
       if (
         square.x + square.w + square.vx > this.x &&
         square.x + square.vx < this.x + this.w &&
@@ -138,23 +145,21 @@ function Obstacle(x, y, w, h, color = "white") {
 }
 
 function Duck() {
-  this.x = 250;
-  this.y = 450;
+  this.iPos = [285, 940, 1460];
+  this.rIpos = Math.floor(Math.random() * 3);
+  this.x = this.iPos[this.rIpos];
+  this.y = 460;
   this.w = 75;
   this.h = 75;
-  this.v = vMult * 15
-  this.an = Math.random()*50
-  this.vx = this.v*Math.cos(this.an);
-  this.vy = this.v*Math.sin(this.an);
+  this.v = vMult * 15;
+  this.iframe = frames;
+  this.isFlying = true;
+  this.isFalling = false;
+  this.an = Math.random() * 45;
+  this.vx = this.v * Math.cos(this.an);
+  this.vy = -this.v * Math.sin(this.an);
   this.color = "green";
   this.stage = 0; //--------------------------------------------------------<<
-  this.drawCircle = () => {
-    ctx.beginPath();
-    ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2, true);
-    ctx.closePath();
-    ctx.fillStyle = this.color;
-    ctx.fill();
-  };
   this.drawSquare = () => {
     ctx.fillStyle = this.color;
     ctx.fillRect(this.x, this.y, this.w, this.h);
@@ -166,6 +171,18 @@ function Duck() {
   this.gotShot = () => {
     this.vx = 0;
     this.vy = 0;
+    this.isFlying = false;
+    this.isFalling = true;
+  };
+  this.randomFly = () => {
+    let cframe = frames - this.iframe;
+    if (cframe % fps === 0 && this.isFlying) {
+      if (Math.random() > 0.5) {
+        this.an = Math.random() * 45;
+        this.vx = this.v * Math.cos(this.an);
+        this.vy = -this.v * Math.sin(this.an);
+      }
+    }
   };
 }
 
@@ -189,14 +206,25 @@ function update() {
     return;
   }
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-  keylayout.draw("rgb(255,255,255,0.5)");
+  if (hidekeyboard) {
+    keylayout.draw("rgb(255,255,255,0)");
+  } else {
+    keylayout.draw("rgb(255,255,255,0.5)");
+  }
   for (o in obstacles) {
-    //obstacles[o].draw()
+    // obstacles[o].draw()
     obstacles[o].bounce(ducks);
+  }
+  if (frames === 40) {
+    ducks.push(new Duck());
+  }
+  if (frames === 60) {
+    ducks.push(new Duck());
   }
   for (d in ducks) {
     ducks[d].move();
     ducks[d].drawSquare();
+    ducks[d].randomFly();
   }
   environment.draw();
   frames++;
@@ -354,11 +382,16 @@ function registerShot(e) {
     ctx.drawImage(cross, x, y, keywidth, keyheight);
   }
   if (i >= 0) {
-    bullets--
-    for (d in ducks){
-      if(ducks[d].x >= x && ducks[d].x <= x+keywidth && ducks[d].y >= y && ducks[d].y <= y+keyheight) {
-        ducks[d].gotShot()
-        score++
+    bullets--;
+    for (d in ducks) {
+      if (
+        ducks[d].x >= x &&
+        ducks[d].x <= x + keywidth &&
+        ducks[d].y >= y &&
+        ducks[d].y <= y + keyheight
+      ) {
+        ducks[d].gotShot();
+        score++;
       }
     }
   }
@@ -373,6 +406,14 @@ addEventListener("keypress", e => {
 addEventListener("keypress", e => {
   if (!isPaused) {
     registerShot(e.code);
+  }
+});
+button1.addEventListener("click", function() {
+  hidekeyboard = !hidekeyboard;
+  if (button1.innerText === "Normal Mode") {
+    button1.innerText = "Expert Mode";
+  } else {
+    button1.innerText = "Normal Mode";
   }
 });
 
