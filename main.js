@@ -2,7 +2,10 @@ let canvas = document.getElementById("canvas");
 canvas.width = 1750;
 canvas.height = 840;
 let ctx = canvas.getContext("2d");
-let fps = 1;
+let interval
+let isPaused = false
+let frames = 0
+let fps = 15;
 let vMult = 30/fps
 let images = {
   bg1: "./images/backgroundHD.png",
@@ -79,6 +82,7 @@ function KeyLayout() {
 
   };
 }
+
 function Obstacle(x,y,w,h,color='white') {
   this.color = color
   this.x = x
@@ -92,13 +96,40 @@ function Obstacle(x,y,w,h,color='white') {
     ctx.fillStyle = this.color
     ctx.fillRect(this.x,this.y,this.w,this.h)
   }
+
+  this.bounce = function(square) {
+    if (square.x + square.w + square.vx > this.x && 
+      square.x + square.vx < this.x + this.w && 
+      square.y + square.h > this.y && 
+      square.y < this.y + this.h) {
+        square.vx *= -1
+      }
+    if (square.x + square.w > this.x && 
+        square.x < this.x + this.w && 
+        square.y + square.h + square.vy > this.y && 
+        square.y + square.vy < this.y + this.h) {
+      square.vy *= -1;
+    }
+
+
+    // if(cx > this.x && cx < (this.x+this.w)){
+    //   /*top*/ if(cy < this.y) {
+    //     if(cy+circle.radius)
+    //   }
+
+
+    //   /*bot*/ if(cy > this.y+this.h)
+    // }
+  }
 }
+
 function Duck(){
   this.x = 100
-  this.y = 100
-  this.r = 50
-  this.vx = vMult
-  this.vy = vMult
+  this.y = 80
+  this.w = 50
+  this.h = 50
+  this.vx = vMult*10
+  this.vy = vMult*10
   this.color = 'green'
   this.drawCircle = ()=>{
     ctx.beginPath();
@@ -106,6 +137,14 @@ function Duck(){
     ctx.closePath();
     ctx.fillStyle = this.color;
     ctx.fill();
+  }
+  this.drawSquare = () => {
+    ctx.fillStyle = this.color;
+    ctx.fillRect(this.x,this.y, this.w, this.h)
+  }
+  this.move = () => {
+    duck.x += duck.vx;
+    duck.y += duck.vy;
   }
 }
 
@@ -118,19 +157,31 @@ let duck = new Duck()
 
 
 function start() {
-  setInterval(update, 1000 / fps);
+  interval = setInterval(update, 1000 / fps);
+}
+function pause(){
+  isPaused = !isPaused
+  drawPause()
 }
 
 function update() {
+  if(isPaused) {return}
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   keylayout.draw('rgb(255,255,255,0.5)');
   for (o in obstacles) {
     obstacles[o].draw()
+    obstacles[o].bounce(duck)
   }
-  duck.drawCircle()
+  duck.move()
+  duck.drawSquare()
   // environment.draw();
+  frames++
 }
 
+function drawPause() {
+  ctx.fillStyle = 'rgb(0,0,0,0.35)'
+  ctx.fillRect(0,0,canvas.width, canvas.height)
+}
 
 function createObstacles(color) {     
   let keywidth = 140;
@@ -150,6 +201,12 @@ function createObstacles(color) {
   obstacles.push(new Obstacle(canvas.width-overbar,keyheight,bar+overbar,keyheight,color))
   
 }
+
+addEventListener("keypress", e => {
+  if (e.keyCode === 32) {
+    pause();
+  }
+})
 
 createObstacles('rgb(255,255,255,0.5)')
 start();
