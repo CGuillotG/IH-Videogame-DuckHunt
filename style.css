@@ -15,7 +15,7 @@ body {
 }
 canvas {
   border-radius: 20px;
-  border: 1px solid;
+  border: 0px;
   background-image: url("./images/backgroundHD.png");
   background-size: 100% 100%;
 }

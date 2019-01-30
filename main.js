@@ -29,7 +29,7 @@ function KeyLayout() {
   this.font = '35px "Duck Hunt"'
   this.keys = [
     ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "?", "¿"],
-    ["Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P", "´", "+"],
+    ["Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P", "′", "+"],
     ["A", "S", "D", "F", "G", "H", "J", "K", "L", "Ñ", "{"],
     ["Z", "X", "C", "V", "B", "N", "M", ",", ".", "-"]
   ];
@@ -124,12 +124,12 @@ function Obstacle(x,y,w,h,color='white') {
 }
 
 function Duck(){
-  this.x = 100
-  this.y = 80
+  this.x = 200
+  this.y = 500
   this.w = 50
   this.h = 50
-  this.vx = vMult*10
-  this.vy = vMult*10
+  this.vx = vMult*15
+  this.vy = vMult*-10
   this.color = 'green'
   this.drawCircle = ()=>{
     ctx.beginPath();
@@ -159,6 +159,7 @@ let duck = new Duck()
 function start() {
   interval = setInterval(update, 1000 / fps);
 }
+
 function pause(){
   isPaused = !isPaused
   drawPause()
@@ -169,25 +170,30 @@ function update() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   keylayout.draw('rgb(255,255,255,0.5)');
   for (o in obstacles) {
-    obstacles[o].draw()
+    //obstacles[o].draw()
     obstacles[o].bounce(duck)
   }
   duck.move()
   duck.drawSquare()
-  // environment.draw();
+  environment.draw();
   frames++
 }
 
 function drawPause() {
   ctx.fillStyle = 'rgb(0,0,0,0.35)'
   ctx.fillRect(0,0,canvas.width, canvas.height)
+  ctx.fillStyle = 'rgb(255,255,255,0.75)'
+  ctx.font = '80px "Duck Hunt"'
+  ctx.textAlign = "center"
+  ctx.textBaseline = "middle"
+  ctx.fillText('Paused',canvas.width/2,canvas.height/2)
 }
 
-function createObstacles(color) {     
+function createObstacles(color) {
   let keywidth = 140;
   let keyheight = 145;
   let bar = 20
-  let overbar = 10
+  let overbar = 0
   obstacles.push(new Obstacle(0,keyheight,keywidth*0.5,keyheight,color))
   obstacles.push(new Obstacle(0,keyheight*2,keywidth,keyheight,color))
   obstacles.push(new Obstacle(0,keyheight*3,keywidth*1.5,keyheight,color))
