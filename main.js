@@ -181,7 +181,10 @@ function Duck() {
     } else {
       this.x += this.vx;
       this.y += this.vy;
-    }
+    }    
+  };
+  this.flewAway = () => {
+    if (this.isFalling) {return}
     if (Math.floor((frames - this.iframe) / fps) > 15) {
       this.isGone = true;
       this.isFlying = false;
@@ -189,8 +192,9 @@ function Duck() {
       this.vx = 0;
       this.vy = vMult * -10;
     }
-  };
+  }
   this.gotShot = () => {
+    if(this.isGone) {return}
     this.color = "red";
     this.vx = 0;
     this.vy = vMult * 10;
@@ -307,17 +311,24 @@ function Round(n) {
   this.nduck = 40;
   this.numducks = 0;
   this.roundended = false;
+  this.nextRound = false
   this.fframe;
   this.refresh = () => {
-    if (this.roundended) {
-      if (ducks.length === 0) {
-        this.fframe = frames;
+    if (this.n === 0) {
+      if (frames - this.iframe >= 40) {
+        this.nextRound = true
       }
-      if (frames - this.fframe >= 40) {
+      return
+    }
+    if (this.roundended) {
+      if (ducks.length === 0 && frames - this.fframe >= 40) {
         if (duckHit.reduce((a, b) => a + b, 0) < 6) {
           gameOver();
+        } else {
+          this.nextRound = true
         }
       }
+      
     } else {
       let random = Math.floor(1 + Math.random() * 5);
       this.cframe = frames - this.iframe;
@@ -329,6 +340,7 @@ function Round(n) {
       }
       if (this.numducks >= 10) {
         this.roundended = true;
+        this.fframe = frames
       }
     }
   };
@@ -355,7 +367,13 @@ function pause() {
 
 function gameOver() {
   isPaused = true;
-  //print Something
+  ctx.fillStyle = "rgb(0,0,0,0.35)";
+  ctx.fillRect(canvas.width/4, canvas.height/4, canvas.width/2, canvas.height/2);
+  ctx.fillStyle = "rgb(240,70,51)";
+  ctx.font = '80px "Duck Hunt"';
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.fillText("GAME OVER", canvas.width / 2, canvas.height / 2);
 }
 
 function update() {
@@ -371,17 +389,25 @@ function update() {
   for (o in obstacles) {
     obstacles[o].bounce(ducks);
   }
-  roundInst.refresh();
   removeDuck();
   for (d in ducks) {
     ducks[d].move();
     ducks[d].drawSquare();
     ducks[d].randomFly();
+    ducks[d].flewAway();
   }
   freeze.draw();
   freeze.freeze();
   environment.draw();
   scoreboard.draw();
+  roundInst.refresh();
+  if(roundInst.nextRound) {
+    round++
+    roundInst = new Round(round)
+    bullets = 20
+    duckHit = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+    duckHitIndex = 0;
+  }
   frames++;
 }
 
