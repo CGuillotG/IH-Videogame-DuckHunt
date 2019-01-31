@@ -288,18 +288,7 @@ scoreboard = new ScoreBoard();
 ducks.push(new Duck());
 
 function start() {
-  clearInterval(interval)
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  isFreezeActive = false
-  round = 0
-  bullets = 20;
-  score = 0;
-  frames = 0
-  environment = new Environment();
-  keylayout = new KeyLayout();
-  obstacles = [];
-  ducks = [];
-  freeze = new FreezeBeam();
+  resetVariables()
   ducks.push(new Duck());
   createObstacles("rgb(255,255,255,0.5)")
   interval = setInterval(update, 1000 / fps);
@@ -351,6 +340,23 @@ function drawPause() {
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
   ctx.fillText("Paused", canvas.width / 2, canvas.height / 2);
+}
+
+function resetVariables(){
+  clearInterval(interval)
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  isFreezeActive = false
+  round = 0
+  bullets = 20;
+  score = 0;
+  frames = 0  
+  duckHit = [0,0,0,0,0,0,0,0,0,0]  
+  duckHitIndex = 0
+  environment = new Environment();
+  keylayout = new KeyLayout();
+  obstacles = [];
+  ducks = [];
+  freeze = new FreezeBeam();
 }
 
 function createObstacles(color) {
@@ -533,8 +539,11 @@ addEventListener("keypress", e => {
     //cheatcode
     console.log(e.code)
     if (e.code === 'Backquote') {
-      ducks[0].gotShot()
-      bullets--
+      let rand = Math.floor(Math.random()*ducks.length)
+      if(ducks[rand].isFlying){
+        ducks[rand].gotShot()
+        bullets--
+      }
     }
   }
 });
@@ -575,6 +584,7 @@ button3.addEventListener("click", function() {
     isPaused = false
   }
   start();
+  button3.blur()
 })
 
 start();
