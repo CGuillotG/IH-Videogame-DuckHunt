@@ -46,22 +46,36 @@ h1 {
   align-content: center;
 }
 button{
+  position: relative;
+  top: 0px;
   font-family: 'Duck Hunt';
   font-size: 24px;
   background-color: #48CDDE;
   color:black;
   padding: 10px 20px 5px 20px;
-  border: 0;
-  box-shadow: 0;
-  border-radius: 5px;
+  border-radius: 10px;
   cursor: pointer;
-  transition: all 0.2s ease;
-  box-shadow: 0 6px #34808a;
+  transition: All 250ms ease;
+  border: 1px solid #177c8e;
+  box-shadow: 0px 5px 0px #34808a;
+  text-shadow: 1px 1px 1px #34808a;
+}
+button:active{
+  position: relative;
+  top: 5px;
+  box-shadow: none !important;
 }
 
-
-.active {
-  margin-top: 2px;
+.pushed {
+  /* position: relative;
+  top: 3.5px; */
   background-color: #34808a;
-  box-shadow: none;
+  box-shadow: 0px 5px 0px #25575e;
+  text-shadow: 1px 1px 1px #25575e;
+}
+#button1{
+  width:205px
+}
+#button2{
+  width:220px
 }

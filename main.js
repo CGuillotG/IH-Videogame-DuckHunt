@@ -7,7 +7,8 @@ canvas.height = 840;
 let ctx = canvas.getContext("2d");
 let interval;
 let score = 0;
-let bullets = 3;
+let bullets = 20;
+let round = 0
 let isFreezeActive = false;
 let isPaused = false;
 let coopEnabled = false;
@@ -19,7 +20,9 @@ let images = {
   bg1: "./images/backgroundHD.png",
   bg2: "./images/sunsetHD.png",
   env: "./images/environmentHD.png",
-  crossh: "./images/crosshairHD.png"
+  crossh: "./images/crosshairHD.png",
+  ui: "./images/scoreboardHD.png",
+  bul:"./images/bulletHD.png"
 };
 
 class Environment {
@@ -42,7 +45,7 @@ function KeyLayout() {
     ["A", "S", "D", "F", "G", "H", "J", "K", "L", "Ñ", "{"],
     ["Z", "X", "C", "V", "B", "N", "M", ",", ".", "-"]
   ];
-  this.draw = function(color = "white") {
+  this.draw = function(color = "white") {    
     ctx.strokeStyle = color;
     for (i = 0; i < 12; i++) {
       ctx.strokeRect(0 + i * this.keywidth, 0, this.keywidth, this.keyheight);
@@ -180,7 +183,8 @@ function Duck() {
     this.vx = 0;
     this.vy = 0;
     this.isFlying = false;
-    this.isFalling = true;
+    this.isFalling = true;    
+    score++;
   };
   this.randomFly = () => {
     let cframe = frames - this.iframe;
@@ -231,14 +235,47 @@ function FreezeBeam(x, y) {
   };
 }
 
-let environment = new Environment();
-let keylayout = new KeyLayout();
-let obstacles = [];
-let ducks = [];
-let freeze = new FreezeBeam();
+function ScoreBoard(){
+  this.board = new Image();
+  this.board.src = images.ui;
+  this.bullet = new Image()
+  this.bullet.src = images.bul
+  this.draw = () => {
+    ctx.drawImage(this.board, 0, 0, canvas.width, canvas.height);
+    ctx.drawImage(this.bullet, 80, 750, 20, 45);
+    ctx.fillStyle = "rgb(255,255,255)";
+    ctx.font = '40px "Duck Hunt"';
+    ctx.textAlign = "left";
+    ctx.textBaseline = "middle";
+    ctx.fillText(`x${bullets.toString().padStart(2,'0')}`, 105, 773)    
+    ctx.font = '45px "Duck Hunt"';
+    ctx.fillText(score.toString().padStart(6,'0'), 1495, 775)
+  }
+}
+
+environment = new Environment();
+keylayout = new KeyLayout();
+obstacles = [];
+ducks = [];
+freeze = new FreezeBeam();
+scoreboard = new ScoreBoard();
 ducks.push(new Duck());
 
 function start() {
+  clearInterval(interval)
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  isFreezeActive = false
+  round = 0
+  bullets = 20;
+  score = 0;
+  frames = 0
+  environment = new Environment();
+  keylayout = new KeyLayout();
+  obstacles = [];
+  ducks = [];
+  freeze = new FreezeBeam();
+  ducks.push(new Duck());
+  createObstacles("rgb(255,255,255,0.5)")
   interval = setInterval(update, 1000 / fps);
 }
 
@@ -276,6 +313,7 @@ function update() {
   freeze.draw();
   freeze.freeze()
   environment.draw();
+  scoreboard.draw()
   frames++;
 }
 
@@ -440,7 +478,6 @@ function registerShot(e) {
         ducks[d].y <= y + keyheight
       ) {
         ducks[d].gotShot();
-        score++;
       }
     }
   }
@@ -462,10 +499,10 @@ button1.addEventListener("click", function() {
   hidekeyboard = !hidekeyboard;
   if (button1.innerText === "Normal Mode") {
     button1.innerText = "Expert Mode";      
-    button1.classList.add("active")
+    button1.classList.add("pushed")
   } else {
     button1.innerText = "Normal Mode";     
-    button1.classList.remove("active")
+    button1.classList.remove("pushed")
   }  
   button1.blur()
 });
@@ -474,10 +511,10 @@ button2.addEventListener("click", function() {
   coopEnabled = !coopEnabled;
   if (button2.innerText === "Co-Op Disabled") {
     button2.innerText = "Co-Op Enabled";    
-    button2.classList.add("active")
+    button2.classList.add("pushed")
   } else {
     button2.innerText = "Co-Op Disabled";
-    button2.classList.remove("active")
+    button2.classList.remove("pushed")
   }
   button2.blur()
 });
@@ -489,5 +526,11 @@ canvas.addEventListener("mousedown", function(e) {
   }
 });
 
-createObstacles("rgb(255,255,255,0.5)");
+button3.addEventListener("click", function() {
+  if (isPaused) {
+    isPaused = false
+  }
+  start();
+})
+
 start();
