@@ -9,6 +9,8 @@ let interval;
 let score = 0;
 let bullets = 20;
 let round = 0
+let duckHit = [0,0,0,0,0,0,0,0,0,0]
+let duckHitIndex = 0
 let isFreezeActive = false;
 let isPaused = false;
 let coopEnabled = false;
@@ -22,7 +24,8 @@ let images = {
   env: "./images/environmentHD.png",
   crossh: "./images/crosshairHD.png",
   ui: "./images/scoreboardHD.png",
-  bul:"./images/bulletHD.png"
+  bul:"./images/bulletHD.png",
+  dckscr: "./images/duckScoreHD.png"
 };
 
 class Environment {
@@ -180,11 +183,14 @@ function Duck() {
     }
   };
   this.gotShot = () => {
+    this.color = 'red'
     this.vx = 0;
-    this.vy = 0;
+    this.vy = vMult * 10;
     this.isFlying = false;
-    this.isFalling = true;    
+    this.isFalling = true;
     score++;
+    duckHit[duckHitIndex] = 1
+    duckHitIndex++
   };
   this.randomFly = () => {
     let cframe = frames - this.iframe;
@@ -240,16 +246,36 @@ function ScoreBoard(){
   this.board.src = images.ui;
   this.bullet = new Image()
   this.bullet.src = images.bul
+  this.ducks = new Image()
+  this.ducks.src = images.dckscr
   this.draw = () => {
     ctx.drawImage(this.board, 0, 0, canvas.width, canvas.height);
-    ctx.drawImage(this.bullet, 80, 750, 20, 45);
+    ctx.drawImage(this.bullet, 1200, 750, 20, 45);
+    for (d in duckHit) {
+      let ox = 670
+      if(d > 5) {
+        ox = 690
+      }
+      if (duckHit[d] === 0) {
+        ctx.drawImage(this.ducks, 0, 0, 700, 700, ox+d*45, 758, 30, 30)
+      } else {
+        ctx.drawImage(this.ducks, 700+700*d, 0, 700, 700, ox+d*45, 758, 30, 30)
+      }
+    }
     ctx.fillStyle = "rgb(255,255,255)";
     ctx.font = '40px "Duck Hunt"';
     ctx.textAlign = "left";
     ctx.textBaseline = "middle";
-    ctx.fillText(`x${bullets.toString().padStart(2,'0')}`, 105, 773)    
+    ctx.fillStyle = "#3fbfff";
+    ctx.fillText(`x${bullets.toString().padStart(2,'0')}`, 1225, 773)    
+    ctx.fillStyle = "rgb(255,255,255)";
     ctx.font = '45px "Duck Hunt"';
-    ctx.fillText(score.toString().padStart(6,'0'), 1495, 775)
+    ctx.fillText(score.toString().padStart(6,'0'), 1365, 775)
+    ctx.fillText(`ROUND ${round}`, 230, 775)
+    ctx.fillStyle = "#83d313";
+    ctx.fillText(`DUCKS`, 510, 775)
+    ctx.fillStyle = "#83d313";
+    ctx.fillText(`|`, 935, 773)
   }
 }
 
@@ -304,7 +330,7 @@ function update() {
   if (frames === 60) {
     ducks.push(new Duck());
   }
-  
+  removeDuck()
   for (d in ducks) {
     ducks[d].move();
     ducks[d].drawSquare();
@@ -478,6 +504,18 @@ function registerShot(e) {
         ducks[d].y <= y + keyheight
       ) {
         ducks[d].gotShot();
+
+      }
+    }
+  }
+}
+
+function removeDuck(){
+  for (d in ducks) {
+    if (!ducks[d].isFlying) {
+      if (ducks[d].y > canvas.height || ducks[d].y < 0) {
+        ducks.splice(d, 1)
+        break
       }
     }
   }
@@ -492,6 +530,12 @@ addEventListener("keypress", e => {
 addEventListener("keypress", e => {
   if (!isPaused) {
     registerShot(e.code);
+    //cheatcode
+    console.log(e.code)
+    if (e.code === 'Backquote') {
+      ducks[0].gotShot()
+      bullets--
+    }
   }
 });
 
