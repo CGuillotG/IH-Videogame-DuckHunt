@@ -461,19 +461,25 @@ addEventListener("keypress", e => {
 button1.addEventListener("click", function() {
   hidekeyboard = !hidekeyboard;
   if (button1.innerText === "Normal Mode") {
-    button1.innerText = "Expert Mode";
+    button1.innerText = "Expert Mode";      
+    button1.classList.add("active")
   } else {
-    button1.innerText = "Normal Mode";
-  }
+    button1.innerText = "Normal Mode";     
+    button1.classList.remove("active")
+  }  
+  button1.blur()
 });
 
 button2.addEventListener("click", function() {
   coopEnabled = !coopEnabled;
   if (button2.innerText === "Co-Op Disabled") {
-    button2.innerText = "Co-Op Enabled";
+    button2.innerText = "Co-Op Enabled";    
+    button2.classList.add("active")
   } else {
     button2.innerText = "Co-Op Disabled";
+    button2.classList.remove("active")
   }
+  button2.blur()
 });
 
 canvas.addEventListener("mousedown", function(e) {
