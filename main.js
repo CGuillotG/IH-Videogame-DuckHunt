@@ -24,6 +24,7 @@ let images = {
   env: "./images/environmentHD.png",
   crossh: "./images/crosshairHD.png",
   ui: "./images/scoreboardHD.png",
+  rndui: "./images/roundUI.png",
   bul: "./images/bulletHD.png",
   dckscr: "./images/duckScoreHD.png"
 };
@@ -329,9 +330,12 @@ function Round(n) {
         }
       }
       
-    } else {
+    } else {      
       let random = Math.floor(1 + Math.random() * 5);
       this.cframe = frames - this.iframe;
+      if(this.cframe <= 35) {
+        drawRound()
+      }
       if (this.cframe === this.nduck) {
         ducks.push(new Duck());
         this.numducks++;
@@ -374,6 +378,19 @@ function gameOver() {
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
   ctx.fillText("GAME OVER", canvas.width / 2, canvas.height / 2);
+}
+
+function drawRound() {
+  //ctx.fillStyle = "rgb(0,0,0,0.85)";
+  let image = new Image()
+  image.src = images.rndui
+  ctx.drawImage(image,canvas.width*1/3+25, canvas.height*1/3-25,canvas.width*1/3-50, canvas.height*1/3-50)
+  //ctx.fillRect(canvas.width*1/3, canvas.height*1/3, canvas.width*1/3, canvas.height*1/3);
+  ctx.fillStyle = "white";
+  ctx.font = '80px "Duck Hunt"';
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.fillText(`Round ${round}`, canvas.width / 2, canvas.height / 2 - 50);
 }
 
 function update() {
@@ -560,24 +577,32 @@ function registerShot(e) {
     i = keycodes[0].indexOf(e);
     x = 0 + i * keywidth;
     y = 0;
+    ctx.fillStyle = 'white'
+    ctx.fillRect(0,0,canvas.width,canvas.height)
     ctx.drawImage(cross, x, y, keywidth, keyheight);
   }
   if (keycodes[1].indexOf(e) !== -1) {
     i = keycodes[1].indexOf(e);
     x = keywidth * 0.5 + i * keywidth;
     y = keyheight;
+    ctx.fillStyle = 'white'
+    ctx.fillRect(0,0,canvas.width,canvas.height)
     ctx.drawImage(cross, x, y, keywidth, keyheight);
   }
   if (keycodes[2].indexOf(e) !== -1) {
     i = keycodes[2].indexOf(e);
     x = keywidth + i * keywidth;
     y = keyheight * 2;
+    ctx.fillStyle = 'white'
+    ctx.fillRect(0,0,canvas.width,canvas.height)
     ctx.drawImage(cross, x, y, keywidth, keyheight);
   }
   if (keycodes[3].indexOf(e) !== -1) {
     i = keycodes[3].indexOf(e);
     x = keywidth * 1.5 + i * keywidth;
     y = keyheight * 3;
+    ctx.fillStyle = 'white'
+    ctx.fillRect(0,0,canvas.width,canvas.height)
     ctx.drawImage(cross, x, y, keywidth, keyheight);
   }
   if (i >= 0) {
@@ -641,6 +666,8 @@ addEventListener("keypress", e => {
       let rand = Math.floor(Math.random() * ducks.length);
       if (ducks[rand].isFlying) {
         ducks[rand].gotShot();
+        ctx.fillStyle = 'white'
+        ctx.fillRect(0,0,canvas.width,canvas.height)
         bullets--;
       }
     }
