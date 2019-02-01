@@ -127,21 +127,21 @@ let sprites = {
     w:320,
     h:310,
     f: [0,0,1,1,2,2,1,1],
-    k:'w'
+    k:''
   },
   rduckFlyAway:{
     src: "./images/rduckFlyAway.png",
     w:320,
     h:310,
     f: [0,0,1,1,2,2,1,1],
-    k:'w'
+    k:''
   },
   pduckFlyAway:{
     src: "./images/pduckFlyAway.png",
     w:320,
     h:310,
     f: [0,0,1,1,2,2,1,1],
-    k:'w'
+    k:''
   },
   gducksFalling:{
     src: "./images/gducksFalling.png",
@@ -291,14 +291,14 @@ function Obstacle(x, y, w, h, color = "white") {
   };
 }
 
-function Duck() {
-  this.iPos = [285, 940, 1460];
+function Duck(t='g',v=15) {
+  this.iPos = [285, 940, 1380];
   this.rIpos = Math.floor(Math.random() * 3);
   this.x = this.iPos[this.rIpos];
-  this.y = 460;
-  this.w = 75;
-  this.h = 75;
-  this.v = vMult * 15;
+  this.y = 380;
+  this.w = 130;
+  this.h = 140;
+  this.v = vMult * v;
   this.iframe = frames;
   this.isFlying = true;
   this.isFalling = false;
@@ -308,7 +308,97 @@ function Duck() {
   this.vx = this.v * Math.cos(this.an);
   this.vy = -this.v * Math.sin(this.an);
   this.color = "green";
-  this.stage = 0; //--------------------------------------------------------<<
+  this.image = new Image();
+  this.sc = 0;
+  this.type = t
+
+  this.draw = () => {
+    if (this.isFlying) {
+      if (this.vx >= 0) {
+        if (Math.abs(this.vy) > Math.abs(this.vx)) {
+          if(this.vy < 0) {
+            switch (this.type) {
+              case 'g':
+                return this.animate(sprites.gducksUpR)
+              case 'r':
+                return this.animate(sprites.rducksUpR)
+              case 'p':
+                return this.animate(sprites.pducksUpR)
+            }
+          }
+        } 
+        switch (this.type) {
+          case 'g':
+            return this.animate(sprites.gducksR)
+          case 'r':
+            return this.animate(sprites.rducksR)
+          case 'p':
+            return this.animate(sprites.pducksR)
+        }
+        
+      } else {
+        if (Math.abs(this.vy) > Math.abs(this.vx)) {
+          if(this.vy < 0) {
+            switch (this.type) {
+              case 'g':
+                return this.animate(sprites.gducksUpL)
+              case 'r':
+                return this.animate(sprites.rducksUpL)
+              case 'p':
+                return this.animate(sprites.pducksUpL)
+            }
+          }
+        } 
+        switch (this.type) {
+          case 'g':
+            return this.animate(sprites.gducksL)
+          case 'r':
+            return this.animate(sprites.rducksL)
+          case 'p':
+            return this.animate(sprites.pducksL)
+        }
+        
+      }
+      
+    } else if (this.isFalling) {
+      switch (this.type) {
+        case 'g':
+          return this.animate(sprites.gducksFalling)
+        case 'r':
+          return this.animate(sprites.rducksFalling)
+        case 'p':
+          return this.animate(sprites.pducksFalling)
+      }      
+    } else if (this.isGone) {
+      switch (this.type) {
+        case 'g':
+          return this.animate(sprites.gduckFlyAway)
+        case 'r':
+          return this.animate(sprites.rduckFlyAway)
+        case 'p':
+          return this.animate(sprites.pduckFlyAway)
+      }
+    } else {
+      return this.drawSquare()
+    }
+  }
+
+  this.animate = sprite => {
+    this.image.src = sprite.src;
+    if(sprite.k === 'h') {
+      this.h = 140
+      this.w = (this.h*sprite.w)/sprite.h
+    } else if (sprite.k === 'w'){
+      this.w = 130
+      this.h = (this.w*sprite.h)/sprite.w
+    }
+    ctx.drawImage(this.image, sprite.w * sprite.f[this.sc], 0, sprite.w, sprite.h, this.x, this.y, this.w, this.h);
+    this.sc++;
+    if (this.sc >= sprite.f.length) {
+      this.sc = 0;
+    }
+  };
+
   this.drawSquare = () => {
     ctx.fillStyle = this.color;
     ctx.fillRect(this.x, this.y, this.w, this.h);
@@ -321,6 +411,10 @@ function Duck() {
       this.x += this.vx;
       this.y += this.vy;
     }
+    if (this.isGone) { //it's not showing
+      this.w *= 0.5
+      this.h *= 0.5
+    }
   };
   this.flewAway = () => {
     if (this.isFalling) {
@@ -332,6 +426,8 @@ function Duck() {
       this.color = "blue";
       this.vx = 0;
       this.vy = vMult * -10;
+      this.w = 130
+      this.h = 125
     }
   };
   this.gotShot = () => {
@@ -563,16 +659,16 @@ function update() {
   removeDuck();
   for (d in ducks) {
     ducks[d].move();
-    ducks[d].drawSquare();
+    ducks[d].draw();
     ducks[d].randomFly();
     ducks[d].flewAway();
   }
-  freeze.draw();
+  freeze.draw();  
   freeze.freeze();
-  if (round !== 0) {
+  environment.draw()
+  if (round > 0) {
     scoreboard.draw();
   }
-  environment.draw()
   roundInst.refresh();
   if (roundInst.nextRound) {
     round++;
