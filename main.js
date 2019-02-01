@@ -13,6 +13,7 @@ let duckHit = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
 let duckHitIndex = 0;
 let isFreezeActive = false;
 let isPaused = false;
+let isGameOver = false;
 let coopEnabled = false;
 let hidekeyboard = false;
 let frames = 0;
@@ -28,6 +29,18 @@ let images = {
   bul: "./images/bullet.png",
   dckscr: "./images/duckScore.png"
 };
+let sounds = {
+  intro: "./music/02 - Duck Hunt Intro.mp3",
+  gotDuck: "./music/04 - Got Duck(s).mp3",
+  laugh: "./music/99 - Laugh (SFX).mp3",
+  gameOver: "./music/07 - You Failed.mp3",
+  bark: "./music/99 - Bark! (SFX).mp3",
+  duckFalls: "./music/99 - Dead Duck Falls (SFX).mp3",
+  duckFlap: "./music/99 - Duck Flapping (SFX).mp3",
+  quack: "./music/99 - Quack! (SFX).mp3",
+  shot: "./music/99 - Gunshot (SFX).mp3",
+  pause: "./music/99 - Pause (SFX).mp3"
+}
 let sprites = {
   dogwalk: {
     src: "./images/dogwalking.png",
@@ -312,6 +325,22 @@ function Duck(t='g',v=15) {
   this.sc = 0;
   this.type = t
 
+  this.quacks = () =>{    
+    let quack = new Audio()  
+    quack.src = sounds.quack
+    quack.play()
+  }
+  this.fallwhistle = () => {
+    let fall = new Audio()  
+    fall.src = sounds.duckFalls
+    fall.play()
+  }
+  this.flaps = () =>{    
+    let flaps = new Audio()  
+    flaps.src = sounds.duckFlap
+    flaps.play()
+  }
+
   this.draw = () => {
     if (this.isFlying) {
       if (this.vx >= 0) {
@@ -403,6 +432,7 @@ function Duck(t='g',v=15) {
     ctx.fillStyle = this.color;
     ctx.fillRect(this.x, this.y, this.w, this.h);
   };
+
   this.move = () => {
     if (this.isSlowed) {
       this.x += this.vx / 4;
@@ -411,10 +441,11 @@ function Duck(t='g',v=15) {
       this.x += this.vx;
       this.y += this.vy;
     }
-    if (this.isGone) { //it's not showing
-      this.w *= 0.5
-      this.h *= 0.5
-    }
+    /*if(!this.isFalling) {
+      if (this.sc === 0) {
+        this.flaps()
+      }
+    }*/
   };
   this.flewAway = () => {
     if (this.isFalling) {
@@ -426,14 +457,16 @@ function Duck(t='g',v=15) {
       this.color = "blue";
       this.vx = 0;
       this.vy = vMult * -10;
-      this.w = 130
-      this.h = 125
+      this.w *= 0.9
+      this.h *= 0.9
+      this.flaps()
     }
   };
   this.gotShot = () => {
     if (this.isGone) {
       return;
     }
+    this.fallwhistle()
     this.color = "red";
     this.vx = 0;
     this.vy = vMult * 10;
@@ -450,6 +483,7 @@ function Duck(t='g',v=15) {
         this.an = Math.random() * 45;
         this.vx = this.v * Math.cos(this.an);
         this.vy = -this.v * Math.sin(this.an);
+        this.quacks()
       }
     }
   };
@@ -554,7 +588,22 @@ function Round(n) {
   this.fframe;
   this.refresh = () => {
     if (this.n === 0) {
-      if (frames - this.iframe >= 40) {
+      if (frames - this.iframe === 5) {
+        let intro = new Audio()
+        intro.src = sounds.intro
+        intro.play()
+      }
+      if (frames - this.iframe === 125) {
+        let bark = new Audio()
+        bark.src = sounds.bark
+        bark.play()
+      }
+      if (frames - this.iframe === 130) {
+        let bark = new Audio()
+        bark.src = sounds.bark
+        bark.play()
+      }
+      if (frames - this.iframe >= 165) {
         this.nextRound = true;
       }
       return;
@@ -570,6 +619,11 @@ function Round(n) {
     } else {
       let random = Math.floor(1 + Math.random() * 5);
       this.cframe = frames - this.iframe;
+      if (this.cframe === 5) {
+        let pauses = new Audio()
+        pauses.src = sounds.pause
+        pauses.play()
+      }
       if (this.cframe <= 35) {
         drawRound();
       }
@@ -602,12 +656,18 @@ function start() {
 }
 
 function pause() {
-  isPaused = !isPaused;
-  drawPause();
+  if (!isGameOver) {
+    isPaused = !isPaused;
+    drawPause();
+  }
+  /*let pauses = new Audio()
+  pauses.src = sounds.pause
+  pauses.play()*/
 }
 
 function gameOver() {
   isPaused = true;
+  isGameOver = true
   ctx.fillStyle = "rgb(0,0,0,0.35)";
   ctx.fillRect(
     canvas.width / 4,
@@ -615,11 +675,14 @@ function gameOver() {
     canvas.width / 2,
     canvas.height / 2
   );
-  ctx.fillStyle = "rgb(240,70,51)";
+  ctx.fillStyle = "red";
   ctx.font = '80px "Duck Hunt"';
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
   ctx.fillText("GAME OVER", canvas.width / 2, canvas.height / 2);
+  let gameO = new Audio()  
+  gameO.src = sounds.gameOver
+  gameO.play()
 }
 
 function drawRound() {
@@ -693,7 +756,9 @@ function drawPause() {
 function resetVariables() {
   clearInterval(interval);
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-  isFreezeActive = false;
+  isFreezeActive = false;  
+  isPaused = false
+  isGameOver = false
   round = 0;
   bullets = 20;
   score = 0;
@@ -858,6 +923,9 @@ function registerShot(e) {
     ctx.drawImage(cross, x, y, keywidth, keyheight);
   }
   if (i >= 0) {
+    let shot = new Audio()  
+    shot.src = sounds.shot
+    shot.play()
     bullets--;
     for (d in ducks) {
       if (
@@ -867,6 +935,7 @@ function registerShot(e) {
         ducks[d].y <= y + keyheight
       ) {
         ducks[d].gotShot();
+
       }
     }
   }
@@ -921,6 +990,9 @@ addEventListener("keypress", e => {
         ctx.fillStyle = "white";
         ctx.fillRect(0, 0, canvas.width, canvas.height);
         bullets--;
+        let shot = new Audio()  
+        shot.src = sounds.shot
+        shot.play()
       }
     }
   }
@@ -964,7 +1036,9 @@ button3.addEventListener("click", function() {
     isPaused = false;
   }
   start();
+  button3.innerText = "Reset"
   button3.blur();
 });
 
+object.addEventListener("load", myScript);
 start();
