@@ -182,10 +182,12 @@ function Duck() {
     } else {
       this.x += this.vx;
       this.y += this.vy;
-    }    
+    }
   };
   this.flewAway = () => {
-    if (this.isFalling) {return}
+    if (this.isFalling) {
+      return;
+    }
     if (Math.floor((frames - this.iframe) / fps) > 15) {
       this.isGone = true;
       this.isFlying = false;
@@ -193,9 +195,11 @@ function Duck() {
       this.vx = 0;
       this.vy = vMult * -10;
     }
-  }
+  };
   this.gotShot = () => {
-    if(this.isGone) {return}
+    if (this.isGone) {
+      return;
+    }
     this.color = "red";
     this.vx = 0;
     this.vy = vMult * 10;
@@ -312,29 +316,28 @@ function Round(n) {
   this.nduck = 40;
   this.numducks = 0;
   this.roundended = false;
-  this.nextRound = false
+  this.nextRound = false;
   this.fframe;
   this.refresh = () => {
     if (this.n === 0) {
       if (frames - this.iframe >= 40) {
-        this.nextRound = true
+        this.nextRound = true;
       }
-      return
+      return;
     }
     if (this.roundended) {
       if (ducks.length === 0 && frames - this.fframe >= 40) {
         if (duckHit.reduce((a, b) => a + b, 0) < 6) {
           gameOver();
         } else {
-          this.nextRound = true
+          this.nextRound = true;
         }
       }
-      
-    } else {      
+    } else {
       let random = Math.floor(1 + Math.random() * 5);
       this.cframe = frames - this.iframe;
-      if(this.cframe <= 35) {
-        drawRound()
+      if (this.cframe <= 35) {
+        drawRound();
       }
       if (this.cframe === this.nduck) {
         ducks.push(new Duck());
@@ -344,7 +347,7 @@ function Round(n) {
       }
       if (this.numducks >= 10) {
         this.roundended = true;
-        this.fframe = frames
+        this.fframe = frames;
       }
     }
   };
@@ -372,7 +375,12 @@ function pause() {
 function gameOver() {
   isPaused = true;
   ctx.fillStyle = "rgb(0,0,0,0.35)";
-  ctx.fillRect(canvas.width/4, canvas.height/4, canvas.width/2, canvas.height/2);
+  ctx.fillRect(
+    canvas.width / 4,
+    canvas.height / 4,
+    canvas.width / 2,
+    canvas.height / 2
+  );
   ctx.fillStyle = "rgb(240,70,51)";
   ctx.font = '80px "Duck Hunt"';
   ctx.textAlign = "center";
@@ -382,9 +390,15 @@ function gameOver() {
 
 function drawRound() {
   //ctx.fillStyle = "rgb(0,0,0,0.85)";
-  let image = new Image()
-  image.src = images.rndui
-  ctx.drawImage(image,canvas.width*1/3+25, canvas.height*1/3-25,canvas.width*1/3-50, canvas.height*1/3-50)
+  let image = new Image();
+  image.src = images.rndui;
+  ctx.drawImage(
+    image,
+    (canvas.width * 1) / 3 + 25,
+    (canvas.height * 1) / 3 - 25,
+    (canvas.width * 1) / 3 - 50,
+    (canvas.height * 1) / 3 - 50
+  );
   //ctx.fillRect(canvas.width*1/3, canvas.height*1/3, canvas.width*1/3, canvas.height*1/3);
   ctx.fillStyle = "white";
   ctx.font = '80px "Duck Hunt"';
@@ -418,10 +432,10 @@ function update() {
   environment.draw();
   scoreboard.draw();
   roundInst.refresh();
-  if(roundInst.nextRound) {
-    round++
-    roundInst = new Round(round)
-    bullets = 20
+  if (roundInst.nextRound) {
+    round++;
+    roundInst = new Round(round);
+    bullets = 20;
     duckHit = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
     duckHitIndex = 0;
   }
@@ -577,32 +591,32 @@ function registerShot(e) {
     i = keycodes[0].indexOf(e);
     x = 0 + i * keywidth;
     y = 0;
-    ctx.fillStyle = 'white'
-    ctx.fillRect(0,0,canvas.width,canvas.height)
+    ctx.fillStyle = "white";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
     ctx.drawImage(cross, x, y, keywidth, keyheight);
   }
   if (keycodes[1].indexOf(e) !== -1) {
     i = keycodes[1].indexOf(e);
     x = keywidth * 0.5 + i * keywidth;
     y = keyheight;
-    ctx.fillStyle = 'white'
-    ctx.fillRect(0,0,canvas.width,canvas.height)
+    ctx.fillStyle = "white";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
     ctx.drawImage(cross, x, y, keywidth, keyheight);
   }
   if (keycodes[2].indexOf(e) !== -1) {
     i = keycodes[2].indexOf(e);
     x = keywidth + i * keywidth;
     y = keyheight * 2;
-    ctx.fillStyle = 'white'
-    ctx.fillRect(0,0,canvas.width,canvas.height)
+    ctx.fillStyle = "white";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
     ctx.drawImage(cross, x, y, keywidth, keyheight);
   }
   if (keycodes[3].indexOf(e) !== -1) {
     i = keycodes[3].indexOf(e);
     x = keywidth * 1.5 + i * keywidth;
     y = keyheight * 3;
-    ctx.fillStyle = 'white'
-    ctx.fillRect(0,0,canvas.width,canvas.height)
+    ctx.fillStyle = "white";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
     ctx.drawImage(cross, x, y, keywidth, keyheight);
   }
   if (i >= 0) {
@@ -666,8 +680,8 @@ addEventListener("keypress", e => {
       let rand = Math.floor(Math.random() * ducks.length);
       if (ducks[rand].isFlying) {
         ducks[rand].gotShot();
-        ctx.fillStyle = 'white'
-        ctx.fillRect(0,0,canvas.width,canvas.height)
+        ctx.fillStyle = "white";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
         bullets--;
       }
     }
@@ -691,11 +705,11 @@ button2.addEventListener("click", function() {
   if (button2.innerText === "Co-Op Disabled") {
     button2.innerText = "Co-Op Enabled";
     button2.classList.add("pushed");
-    canvas.style.backgroundImage = 'url("./images/sunset.png")'
+    canvas.style.backgroundImage = 'url("./images/sunset.png")';
   } else {
     button2.innerText = "Co-Op Disabled";
     button2.classList.remove("pushed");
-    canvas.style.backgroundImage = 'url("./images/background.png")'
+    canvas.style.backgroundImage = 'url("./images/background.png")';
   }
   button2.blur();
 });
