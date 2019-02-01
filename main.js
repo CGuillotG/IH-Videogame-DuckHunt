@@ -41,6 +41,8 @@ let sounds = {
   shot: "./music/99 - Gunshot (SFX).mp3",
   pause: "./music/99 - Pause (SFX).mp3"
 }
+let intro = new Audio()
+intro.src = sounds.intro
 let sprites = {
   dogwalk: {
     src: "./images/dogwalking.png",
@@ -589,11 +591,12 @@ function Round(n) {
   this.refresh = () => {
     if (this.n === 0) {
       if (frames - this.iframe === 5) {
-        let intro = new Audio()
-        intro.src = sounds.intro
         intro.play()
+        //create dog
+        
       }
       if (frames - this.iframe === 125) {
+        //dog stops
         let bark = new Audio()
         bark.src = sounds.bark
         bark.play()
@@ -605,6 +608,7 @@ function Round(n) {
       }
       if (frames - this.iframe >= 165) {
         this.nextRound = true;
+        //dog = ""
       }
       return;
     }
@@ -657,12 +661,18 @@ function start() {
 
 function pause() {
   if (!isGameOver) {
-    isPaused = !isPaused;
-    drawPause();
+    if (isPaused) {
+      isPaused = false
+      if(!intro.ended) {
+
+        intro.play()      
+      }
+    } else {
+      isPaused = true      
+      intro.pause()
+      drawPause();
+    }
   }
-  /*let pauses = new Audio()
-  pauses.src = sounds.pause
-  pauses.play()*/
 }
 
 function gameOver() {
@@ -756,6 +766,8 @@ function drawPause() {
 function resetVariables() {
   clearInterval(interval);
   ctx.clearRect(0, 0, canvas.width, canvas.height);
+  intro.pause()
+  intro.currentTime = 0
   isFreezeActive = false;  
   isPaused = false
   isGameOver = false
@@ -889,7 +901,9 @@ function registerShot(e) {
       "Slash"
     ]
   ];
-
+  if (bullets <= 0) {
+    bullets = 0
+    return}
   if (keycodes[0].indexOf(e) !== -1) {
     i = keycodes[0].indexOf(e);
     x = 0 + i * keywidth;
@@ -982,7 +996,6 @@ addEventListener("keypress", e => {
   if (!isPaused) {
     registerShot(e.code);
     //cheatcode
-    console.log(e.code);
     if (e.code === "Backquote") {
       let rand = Math.floor(Math.random() * ducks.length);
       if (ducks[rand].isFlying) {
@@ -1040,5 +1053,3 @@ button3.addEventListener("click", function() {
   button3.blur();
 });
 
-object.addEventListener("load", myScript);
-start();
