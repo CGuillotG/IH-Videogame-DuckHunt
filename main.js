@@ -19,14 +19,14 @@ let frames = 0;
 let fps = 20;
 let vMult = 30 / fps;
 let images = {
-  bg1: "./images/backgroundHD.png",
-  bg2: "./images/sunsetHD.png",
-  env: "./images/environmentHD.png",
-  crossh: "./images/crosshairHD.png",
-  ui: "./images/scoreboardHD.png",
+  bg1: "./images/background.png",
+  bg2: "./images/sunset.png",
+  env: "./images/environment.png",
+  crossh: "./images/crosshair.png",
+  ui: "./images/scoreboard.png",
   rndui: "./images/roundUI.png",
-  bul: "./images/bulletHD.png",
-  dckscr: "./images/duckScoreHD.png"
+  bul: "./images/bullet.png",
+  dckscr: "./images/duckScore.png"
 };
 
 class Environment {
@@ -691,9 +691,11 @@ button2.addEventListener("click", function() {
   if (button2.innerText === "Co-Op Disabled") {
     button2.innerText = "Co-Op Enabled";
     button2.classList.add("pushed");
+    canvas.style.backgroundImage = 'url("./images/sunset.png")'
   } else {
     button2.innerText = "Co-Op Disabled";
     button2.classList.remove("pushed");
+    canvas.style.backgroundImage = 'url("./images/background.png")'
   }
   button2.blur();
 });
