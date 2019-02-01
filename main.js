@@ -28,6 +28,144 @@ let images = {
   bul: "./images/bullet.png",
   dckscr: "./images/duckScore.png"
 };
+let sprites = {
+  dogwalk: {
+    src: "./images/dogwalking.png",
+    w: 520,
+    h: 420,
+    f: [0,0,0,0,1,1,1,1,2,2,2,2,3,3,3,3,0,0,0,0,1,1,1,1,2,2,2,2,3,3,3,3,4,4,4,4,4,4,4,4,0,0,0,0,4,4,4,4,4,4,4,4,0,0,0,0]
+  },
+  dogbarking: {
+    src: "./images/dogbarking.png"
+  },
+  gducksR:{
+    src: "./images/gducksR.png",
+    w:350,
+    h:378,
+    f: [0,0,1,1,2,2,1,1,0,0,1,1,2,2,1,1,0,0,1,1,2,2,3,3],
+    k:'w'
+  },
+  gducksL:{
+    src: "./images/gducksL.png",
+    w:350,
+    h:378,
+    f: [0,0,1,1,2,2,1,1,0,0,1,1,2,2,1,1,0,0,1,1,2,2,3,3],
+    k:'w'
+  },
+  rducksR:{
+    src: "./images/rducksR.png",
+    w:350,
+    h:378,
+    f: [0,0,1,1,2,2,1,1,0,0,1,1,2,2,1,1,0,0,1,1,2,2,3,3],
+    k:'w'
+  },
+  rducksL:{
+    src: "./images/rducksL.png",
+    w:350,
+    h:378,
+    f: [0,0,1,1,2,2,1,1,0,0,1,1,2,2,1,1,0,0,1,1,2,2,3,3],
+    k:'w'
+  },
+  pducksR:{
+    src: "./images/pducksR.png",
+    w:350,
+    h:378,
+    f: [0,0,1,1,2,2,1,1,0,0,1,1,2,2,1,1,0,0,1,1,2,2,3,3],
+    k:'w'
+  },
+  pducksL:{
+    src: "./images/pducksL.png",
+    w:350,
+    h:378,
+    f: [0,0,1,1,2,2,1,1,0,0,1,1,2,2,1,1,0,0,1,1,2,2,3,3],
+    k:'w'
+  },
+  gducksUpR:{
+    src: "./images/gducksUpR.png",
+    w:320,
+    h:400,
+    f: [0,0,1,1,2,2,1,1],
+    k:'h'
+  },
+  gducksUpL:{
+    src: "./images/gducksUpL.png",
+    w:320,
+    h:400,
+    f: [0,0,1,1,2,2,1,1],
+    k:'h'
+  },
+  rducksUpR:{
+    src: "./images/rducksUpR.png",
+    w:320,
+    h:400,
+    f: [0,0,1,1,2,2,1,1],
+    k:'h'
+  },
+  rducksUpL:{
+    src: "./images/rducksUpL.png",
+    w:320,
+    h:400,
+    f: [0,0,1,1,2,2,1,1],
+    k:'h'
+  },
+  pducksUpR:{
+    src: "./images/pducksUpR.png",
+    w:320,
+    h:400,
+    f: [0,0,1,1,2,2,1,1],
+    k:'h'
+  },
+  pducksUpL:{
+    src: "./images/pducksUpL.png",
+    w:320,
+    h:400,
+    f: [0,0,1,1,2,2,1,1],
+    k:'h'
+  },
+  gduckFlyAway:{
+    src: "./images/gduckFlyAway.png",
+    w:320,
+    h:310,
+    f: [0,0,1,1,2,2,1,1],
+    k:'w'
+  },
+  rduckFlyAway:{
+    src: "./images/rduckFlyAway.png",
+    w:320,
+    h:310,
+    f: [0,0,1,1,2,2,1,1],
+    k:'w'
+  },
+  pduckFlyAway:{
+    src: "./images/pduckFlyAway.png",
+    w:320,
+    h:310,
+    f: [0,0,1,1,2,2,1,1],
+    k:'w'
+  },
+  gducksFalling:{
+    src: "./images/gducksFalling.png",
+    w:200,
+    h:330,
+    f: [0,0,0,1,1,1,2,2,2,3,3,3],
+    k:'h'
+  },
+  rducksFalling:{
+    src: "./images/rducksFalling.png",
+    w:200,
+    h:330,
+    f: [0,0,0,1,1,1,2,2,2,3,3,3],
+    k:'h'
+  },
+  pducksFalling:{
+    src: "./images/pducksFalling.png",
+    w:200,
+    h:330,
+    f: [0,0,0,1,1,1,2,2,2,3,3,3],
+    k:'h'
+  }
+
+};
 
 class Environment {
   constructor() {
@@ -414,6 +552,8 @@ function update() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   if (hidekeyboard) {
     keylayout.draw("rgb(255,255,255,0)");
+  } else if (round === 0){
+    keylayout.draw("rgb(255,255,255,0)");
   } else {
     keylayout.draw("rgb(255,255,255,0.5)");
   }
@@ -429,8 +569,10 @@ function update() {
   }
   freeze.draw();
   freeze.freeze();
-  environment.draw();
-  scoreboard.draw();
+  if (round !== 0) {
+    scoreboard.draw();
+  }
+  environment.draw()
   roundInst.refresh();
   if (roundInst.nextRound) {
     round++;
