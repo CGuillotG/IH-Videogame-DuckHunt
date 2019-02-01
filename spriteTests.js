@@ -10,7 +10,11 @@ sprites = {
     f: [0,0,0,0,1,1,1,1,2,2,2,2,3,3,3,3,0,0,0,0,1,1,1,1,2,2,2,2,3,3,3,3,4,4,4,4,4,4,4,4,0,0,0,0,4,4,4,4,4,4,4,4,0,0,0,0]
   },
   dogbarking: {
-    src: "./images/dogbarking.png"
+    src: "./images/dogbarking.png",    
+    w: 530,
+    h: 450,
+    f: [0],
+    k: 'w'
   },
   gducksR:{
     src: "./images/gducksR.png",
@@ -183,6 +187,8 @@ let horse15 = new Horse(300,450)
 let horse16 = new Horse(0,600)
 let horse17 = new Horse(150,600)
 let horse18 = new Horse(300,600)
+let horse19 = new Horse(450,600)
+let horse20 = new Horse(600,600)
 
 function start() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -203,6 +209,8 @@ function start() {
   horse15.animate(sprites.pduckFlyAway);
   horse16.animate(sprites.gducksFalling);
   horse17.animate(sprites.rducksFalling);
-  horse18.animate(sprites.pducksFalling);
+  horse18.animate(sprites.pducksFalling);  
+  horse19.animate(sprites.dogwalk);
+  horse20.animate(sprites.dogbarking);
 }
 setInterval(start, 1000 / 20);

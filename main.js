@@ -44,14 +44,26 @@ let sounds = {
 let intro = new Audio()
 intro.src = sounds.intro
 let sprites = {
-  dogwalk: {
+  dogwalk1: {
     src: "./images/dogwalking.png",
     w: 520,
     h: 420,
-    f: [0,0,0,0,1,1,1,1,2,2,2,2,3,3,3,3,0,0,0,0,1,1,1,1,2,2,2,2,3,3,3,3,4,4,4,4,4,4,4,4,0,0,0,0,4,4,4,4,4,4,4,4,0,0,0,0]
+    f: [0,0,0,0,1,1,1,1,2,2,2,2,3,3,3,3,0,0,0,0,1,1,1,1,2,2,2,2,3,3,3,3,4,4,4,4,4,4,4,4,0,0,0,0,4,4,4,4,4,4,4,4,0,0,0,0],
+    k: 'w'
+  },
+  dogwalk2: {
+    src: "./images/dogwalking.png",
+    w: 520,
+    h: 420,
+    f: [0,0,0,0,1,1,1,1,2,2,2,2,3,3,3,3],
+    k: 'w'
   },
   dogbarking: {
-    src: "./images/dogbarking.png"
+    src: "./images/dogbarking.png",    
+    w: 530,
+    h: 450,
+    f: [0],
+    k: 'w'
   },
   gducksR:{
     src: "./images/gducksR.png",
@@ -474,7 +486,17 @@ function Duck(t='g',v=15) {
     this.vy = vMult * 10;
     this.isFlying = false;
     this.isFalling = true;
-    score++;
+    switch (this.type) {
+      case 'g':
+      score += 100
+      break;
+      case 'r':
+      score += 500
+      break;
+      case 'p':
+      score += 1000
+      break;
+    }
     duckHit[duckHitIndex] = 1;
     duckHitIndex++;
   };
@@ -592,11 +614,22 @@ function Round(n) {
     if (this.n === 0) {
       if (frames - this.iframe === 5) {
         intro.play()
-        //create dog
-        
       }
+      if (frames - this.iframe < 37) {
+          wdog.x += 5          
+          wdog.animate(sprites.dogwalk1)
+          return
+        }
+      if (frames - this.iframe >= 37 && frames - this.iframe < 61) {
+          wdog.animate(sprites.dogwalk1)
+          return
+        }
+      if (frames - this.iframe < 125) {
+          wdog.x += 5          
+          wdog.animate(sprites.dogwalk2)
+          return
+        }      
       if (frames - this.iframe === 125) {
-        //dog stops
         let bark = new Audio()
         bark.src = sounds.bark
         bark.play()
@@ -605,6 +638,10 @@ function Round(n) {
         let bark = new Audio()
         bark.src = sounds.bark
         bark.play()
+      }
+      if (frames - this.iframe <= 165) {        
+        wdog.animate(sprites.dogbarking)
+        return
       }
       if (frames - this.iframe >= 165) {
         this.nextRound = true;
@@ -632,7 +669,18 @@ function Round(n) {
         drawRound();
       }
       if (this.cframe === this.nduck) {
-        ducks.push(new Duck());
+        switch (Math.floor(Math.random()*3)) {
+          case 0:
+          ducks.push(new Duck('p',20));
+          break;
+          case 1:
+          ducks.push(new Duck('r',15));
+          break;
+          case 2:
+          ducks.push(new Duck('g',10));
+          break;
+        }
+        
         this.numducks++;
         this.lduck = this.cframe;
         this.nduck = this.cframe + random * fps;
@@ -645,6 +693,32 @@ function Round(n) {
   };
 }
 
+function WalkingDog() {
+  this.x = 0
+  this.y = 500
+  this.w = 320
+  this.h = 320
+  this.sc = 0
+  this.image = new Image()
+  this.animate = sprite => {
+    this.image.src = sprite.src;
+    if(sprite.k === 'h') {
+      this.h = 1000
+      this.w = (this.h*sprite.w)/sprite.h
+    } else if (sprite.k === 'w'){
+      this.w = 320
+      this.h = (this.w*sprite.h)/sprite.w
+    }
+    ctx.drawImage(this.image, sprite.w * sprite.f[this.sc], 0, sprite.w, sprite.h, this.x, this.y, this.w, this.h);
+    this.sc++;
+    if (this.sc >= sprite.f.length) {
+      this.sc = 0;
+    }
+
+    }
+  }
+
+let wdog = new WalkingDog();
 let roundInst = new Round(0);
 let environment = new Environment();
 let keylayout = new KeyLayout();
@@ -775,6 +849,7 @@ function resetVariables() {
   bullets = 20;
   score = 0;
   frames = 0;
+  wdog.x=0
   duckHit = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
   duckHitIndex = 0;
   roundInst = new Round(0);
