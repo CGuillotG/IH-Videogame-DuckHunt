@@ -190,8 +190,28 @@ let sprites = {
     h:330,
     f: [0,0,0,1,1,1,2,2,2,3,3,3],
     k:'h'
+  },
+  gduckShot: {
+    src: "./images/gduckShot.png",    
+    w: 310,
+    h: 320,
+    f: [0],
+    k: 'w'
+  },
+  rduckShot: {
+    src: "./images/rduckShot.png",    
+    w: 310,
+    h: 320,
+    f: [0],
+    k: 'w'
+  },
+  pduckShot: {
+    src: "./images/pduckShot.png",    
+    w: 310,
+    h: 320,
+    f: [0],
+    k: 'w'
   }
-
 };
 
 class Environment {
@@ -328,6 +348,8 @@ function Duck(t='g',v=15) {
   this.v = vMult * v;
   this.iframe = frames;
   this.isFlying = true;
+  this.isShot = false;
+  this.shotPause = 0
   this.isFalling = false;
   this.isSlowed = false;
   this.isGone = false;
@@ -403,6 +425,21 @@ function Duck(t='g',v=15) {
         
       }
       
+    } else if (this.isShot) {
+      if(this.shotPause < 10) {
+        this.shotPause++
+      } else {
+        this.isFalling = true
+        this.gotShot()
+      }
+      switch (this.type) {
+        case 'g':
+          return this.animate(sprites.gduckShot)
+        case 'r':
+          return this.animate(sprites.rduckShot)
+        case 'p':
+          return this.animate(sprites.pduckShot)
+      }
     } else if (this.isFalling) {
       switch (this.type) {
         case 'g':
@@ -455,11 +492,6 @@ function Duck(t='g',v=15) {
       this.x += this.vx;
       this.y += this.vy;
     }
-    /*if(!this.isFalling) {
-      if (this.sc === 0) {
-        this.flaps()
-      }
-    }*/
   };
   this.flewAway = () => {
     if (this.isFalling) {
@@ -479,26 +511,36 @@ function Duck(t='g',v=15) {
   this.gotShot = () => {
     if (this.isGone) {
       return;
+    }    
+ if(this.isFalling){
+      this.fallwhistle()
+      this.color = "red";
+      this.vx = 0;
+      this.vy = vMult * 10;
+      this.isFlying = false;
+      this.isFalling = true;
+      this.isShot = false
+    } else {
+      this.vx = 0;      
+      this.vy = 0;
+      this.isFlying = false;
+      this.isShot = true;      
+      this.quack()
+      switch (this.type) {
+        case 'g':
+        score += 100
+        break;
+        case 'r':
+        score += 500
+        break;
+        case 'p':
+        score += 1000
+        break;
+      }
+      duckHit[duckHitIndex] = 1;
+      duckHitIndex++;
     }
-    this.fallwhistle()
-    this.color = "red";
-    this.vx = 0;
-    this.vy = vMult * 10;
-    this.isFlying = false;
-    this.isFalling = true;
-    switch (this.type) {
-      case 'g':
-      score += 100
-      break;
-      case 'r':
-      score += 500
-      break;
-      case 'p':
-      score += 1000
-      break;
-    }
-    duckHit[duckHitIndex] = 1;
-    duckHitIndex++;
+
   };
   this.randomFly = () => {
     let cframe = frames - this.iframe;
@@ -738,7 +780,6 @@ function pause() {
     if (isPaused) {
       isPaused = false
       if(!intro.ended) {
-
         intro.play()      
       }
     } else {
