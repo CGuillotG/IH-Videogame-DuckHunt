@@ -4,139 +4,139 @@ canvas.height = 900;
 let ctx = canvas.getContext("2d");
 sprites = {
   dogwalk: {
-    src: "./images/dogwalking.png",
+    src: "../images/dogwalking.png",
     w: 520,
     h: 420,
     f: [0,0,0,0,1,1,1,1,2,2,2,2,3,3,3,3,0,0,0,0,1,1,1,1,2,2,2,2,3,3,3,3,4,4,4,4,4,4,4,4,0,0,0,0,4,4,4,4,4,4,4,4,0,0,0,0]
   },
   dogbarking: {
-    src: "./images/dogbarking.png",    
+    src: "../images/dogbarking.png",    
     w: 530,
     h: 450,
     f: [0],
-    k: 'w'
+    k: 'h'
   },
   gducksR:{
-    src: "./images/gducksR.png",
+    src: "../images/gducksR.png",
     w:350,
     h:378,
     f: [0,0,1,1,2,2,1,1,0,0,1,1,2,2,1,1,0,0,1,1,2,2,3,3],
     k:'w'
   },
   gducksL:{
-    src: "./images/gducksL.png",
+    src: "../images/gducksL.png",
     w:350,
     h:378,
     f: [0,0,1,1,2,2,1,1,0,0,1,1,2,2,1,1,0,0,1,1,2,2,3,3],
     k:'w'
   },
   rducksR:{
-    src: "./images/rducksR.png",
+    src: "../images/rducksR.png",
     w:350,
     h:378,
     f: [0,0,1,1,2,2,1,1,0,0,1,1,2,2,1,1,0,0,1,1,2,2,3,3],
     k:'w'
   },
   rducksL:{
-    src: "./images/rducksL.png",
+    src: "../images/rducksL.png",
     w:350,
     h:378,
     f: [0,0,1,1,2,2,1,1,0,0,1,1,2,2,1,1,0,0,1,1,2,2,3,3],
     k:'w'
   },
   pducksR:{
-    src: "./images/pducksR.png",
+    src: "../images/pducksR.png",
     w:350,
     h:378,
     f: [0,0,1,1,2,2,1,1,0,0,1,1,2,2,1,1,0,0,1,1,2,2,3,3],
     k:'w'
   },
   pducksL:{
-    src: "./images/pducksL.png",
+    src: "../images/pducksL.png",
     w:350,
     h:378,
     f: [0,0,1,1,2,2,1,1,0,0,1,1,2,2,1,1,0,0,1,1,2,2,3,3],
     k:'w'
   },
   gducksUpR:{
-    src: "./images/gducksUpR.png",
+    src: "../images/gducksUpR.png",
     w:320,
     h:400,
     f: [0,0,1,1,2,2,1,1],
     k:'h'
   },
   gducksUpL:{
-    src: "./images/gducksUpL.png",
+    src: "../images/gducksUpL.png",
     w:320,
     h:400,
     f: [0,0,1,1,2,2,1,1],
     k:'h'
   },
   rducksUpR:{
-    src: "./images/rducksUpR.png",
+    src: "../images/rducksUpR.png",
     w:320,
     h:400,
     f: [0,0,1,1,2,2,1,1],
     k:'h'
   },
   rducksUpL:{
-    src: "./images/rducksUpL.png",
+    src: "../images/rducksUpL.png",
     w:320,
     h:400,
     f: [0,0,1,1,2,2,1,1],
     k:'h'
   },
   pducksUpR:{
-    src: "./images/pducksUpR.png",
+    src: "../images/pducksUpR.png",
     w:320,
     h:400,
     f: [0,0,1,1,2,2,1,1],
     k:'h'
   },
   pducksUpL:{
-    src: "./images/pducksUpL.png",
+    src: "../images/pducksUpL.png",
     w:320,
     h:400,
     f: [0,0,1,1,2,2,1,1],
     k:'h'
   },
   gduckFlyAway:{
-    src: "./images/gduckFlyAway.png",
+    src: "../images/gduckFlyAway.png",
     w:320,
     h:310,
     f: [0,0,1,1,2,2,1,1],
     k:'w'
   },
   rduckFlyAway:{
-    src: "./images/rduckFlyAway.png",
+    src: "../images/rduckFlyAway.png",
     w:320,
     h:310,
     f: [0,0,1,1,2,2,1,1],
     k:'w'
   },
   pduckFlyAway:{
-    src: "./images/pduckFlyAway.png",
+    src: "../images/pduckFlyAway.png",
     w:320,
     h:310,
     f: [0,0,1,1,2,2,1,1],
     k:'w'
   },
   gducksFalling:{
-    src: "./images/gducksFalling.png",
+    src: "../images/gducksFalling.png",
     w:200,
     h:330,
     f: [0,0,0,1,1,1,2,2,2,3,3,3],
     k:'h'
   },
   rducksFalling:{
-    src: "./images/rducksFalling.png",
+    src: "../images/rducksFalling.png",
     w:200,
     h:330,
     f: [0,0,0,1,1,1,2,2,2,3,3,3],
     k:'h'
   },
   pducksFalling:{
-    src: "./images/pducksFalling.png",
+    src: "../images/pducksFalling.png",
     w:200,
     h:330,
     f: [0,0,0,1,1,1,2,2,2,3,3,3],
@@ -188,7 +188,10 @@ let horse16 = new Horse(0,600)
 let horse17 = new Horse(150,600)
 let horse18 = new Horse(300,600)
 let horse19 = new Horse(450,600)
-let horse20 = new Horse(600,600)
+horse19.w = 180
+let horse20 = new Horse(650,600)
+horse20.h = 180
+horse20.w = 180
 
 function start() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
